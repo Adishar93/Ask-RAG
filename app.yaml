@@ -14,3 +14,4 @@
 
 runtime: python39
 service: rag-chat-pdf-doc
+instance_class: F2

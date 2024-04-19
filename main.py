@@ -4,6 +4,7 @@ from flask import Flask, request, jsonify
 from rag import answer_based_on_document, generate_vectorstore
 from utility import write_file
 
+global vectorstore
 
 # Loading API credentials
 load_dotenv()
@@ -11,18 +12,19 @@ load_dotenv()
 # Flask Server
 app = Flask(__name__)
 
-
 # Endpoints
 @app.route("/upload/process/pdf", methods=["POST"])
 def upload_process_pdf():
-    global llm, vectorstore
+    global vectorstore
     uploaded_file = request.files["file"]
 
     if "file" not in request.files:
         return jsonify({"error": "No file part"}), 400
 
     file_contents = uploaded_file.read()
-    storage_folder = "/temp"
+    #storage_folder = "."
+    #For AppEngine
+    storage_folder = "/tmp"
     file_path = os.path.join(storage_folder, "file.pdf")
 
     write_file(file_path, file_contents)
@@ -45,11 +47,11 @@ def handle_preflight():
 
 @app.route("/ask/question", methods=["POST"])
 def answer_question():
-    global template, vectorstore
+    global vectorstore
     data = request.get_json()
     question = data.get("question")
 
-    finalAnswer = answer_based_on_document(question)
+    finalAnswer = answer_based_on_document(vectorstore, question)
 
     response = jsonify({"answer": finalAnswer})
     response.headers.add("Access-Control-Allow-Origin", "*")

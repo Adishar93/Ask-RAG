@@ -1,3 +1,4 @@
+import os
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import FAISS
@@ -8,8 +9,7 @@ from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
-global llm, template, vectorstore
-vectorstore = None
+global llm, template
 llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
 template = """Use the following pieces of context to answer the question at the end. Use ONLY the context, do not make up your own answers.
     If the question is not related in any way or form to the data provided in context, say only this sentence 'Sorry, data regarding the same is not present in the PDF'.
@@ -34,20 +34,18 @@ def split_text(docs):
 
 
 def generate_vectorstore(file_path):
-    global vectorstore
     loader = PyPDFLoader(file_path)
     docs = loader.load_and_split()
 
     all_splits = split_text(docs)
-
     vectorstore = FAISS.from_documents(
         documents=all_splits, embedding=OpenAIEmbeddings()
     )
     return vectorstore
 
 
-def answer_based_on_document(question):
-    global vectorstore, template
+def answer_based_on_document(vectorstore, question):
+    global template
     retriever = vectorstore.as_retriever(
         search_type="similarity", search_kwargs={"k": 6}
     )
