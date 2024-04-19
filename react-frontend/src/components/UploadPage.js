@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 import { SERVER_URL } from '../Constants';
+import CircularProgress from '@mui/material/CircularProgress';
 
-function UploadPage({ history }) {
+
+function UploadPage({ setSnackbarOpen }) {
     const [selectedFile, setSelectedFile] = useState(null);
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const handleFileChange = (e) => {
         setSelectedFile(e.target.files[0]);
@@ -13,6 +16,7 @@ function UploadPage({ history }) {
     const handleUpload = async () => {
         const formData = new FormData();
         formData.append('file', selectedFile);
+        setLoading(true);
 
         try {
             const response = await axios.post(SERVER_URL + '/upload/process/pdf', formData, {
@@ -20,18 +24,30 @@ function UploadPage({ history }) {
                     'Content-Type': 'multipart/form-data'
                 }
             });
-            console.log(response.text);
+            console.log(response.data.message);
+
+            setLoading(false);
+            setSnackbarOpen(true);
             navigate('/chat');
+
         } catch (error) {
             console.error('Error uploading PDF:', error);
+            setLoading(false)
         }
     };
 
     return (
         <div>
-            <h1>Upload PDF</h1>
-            <input type="file" onChange={handleFileChange} />
-            <button onClick={handleUpload}>Upload</button>
+            <div className="upload-container"> {/* Apply common container styles */}
+                <h2>Upload PDF</h2>
+                <input type="file" onChange={handleFileChange} className="input-field" /> {/* Apply input field styles */}
+                <button onClick={handleUpload} className="button">Upload</button> {/* Apply button styles */}
+            </div>
+            {loading && (
+                <div className="loading-indicator-upload"> {/* Apply loading indicator styles */}
+                    <CircularProgress />
+                </div>
+            )}
         </div>
     );
 }
