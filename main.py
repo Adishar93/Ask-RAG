@@ -3,6 +3,9 @@ from dotenv import load_dotenv
 from flask import Flask, request, jsonify
 from rag import answer_based_on_document, generate_vectorstore
 from utility import write_file
+from google.cloud import datastore
+
+datastore_client = datastore.Client()
 
 global vectorstore
 
@@ -22,14 +25,18 @@ def upload_process_pdf():
         return jsonify({"error": "No file part"}), 400
 
     file_contents = uploaded_file.read()
-    #storage_folder = "."
+    storage_folder = "."
     #For AppEngine
-    storage_folder = "/tmp"
+    #storage_folder = "/tmp"
     file_path = os.path.join(storage_folder, "file.pdf")
 
     write_file(file_path, file_contents)
 
     vectorstore = generate_vectorstore(file_path)
+    entity = datastore.Entity(key=datastore_client.key("vector"))
+    entity.update({"vectorstor": dt})
+
+    datastore_client.put(entity)
 
     response = jsonify({"message": "Request received successfully"})
     response.headers.add("Access-Control-Allow-Origin", "*")
