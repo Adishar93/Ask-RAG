@@ -30,6 +30,7 @@ function ChatPage() {
 
     return (
         <div className="chat-container">
+            <h2>Chat PDF</h2>
             <div className="input-container">
                 <input
                     type="text"
@@ -39,7 +40,7 @@ function ChatPage() {
                     className="input-field"
                 />
                 <button onClick={sendMessage} className="button">
-                    Ask Doc
+                    Ask
                 </button>
                 <button onClick={navigateHome} className="button">
                     Upload New File

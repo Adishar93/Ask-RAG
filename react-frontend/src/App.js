@@ -22,7 +22,7 @@ function App() {
 
       <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
         <MuiAlert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          File Uploaded Successfully!
+          File Uploaded and Processed Successfully!
         </MuiAlert>
       </Snackbar>
 
