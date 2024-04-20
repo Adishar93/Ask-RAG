@@ -1,4 +1,5 @@
 # RAG-Chat-Doc
+
 ## Local Setup:
 ### Backend Setup:
 
@@ -47,6 +48,11 @@
 
 Once both the backend and frontend are set up, you should be able to access the application locally.
 
+## Screenshots:
+
+![Screenshot 2024-04-20 010644](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/4cca4520-b48c-425d-9302-5a23687c8421)
+![Screenshot 2024-04-20 010842](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/b72a9461-ab50-462a-8499-fe0d84cfa099)
+
 ## Architecture and Technologies Used:
 
 ### Frontend:
@@ -71,13 +77,10 @@ Both the frontend and backend are deployed on separate App Engine instances. To 
 
 ## Limitations & Challenges Encountered:
 - While performing similarity search on a large pdf, there can be high memory usage as observed with lower tiered AppEngine instances that have low RAM.
-- Since the AppEngine instance can go down to 0 after a period of inactivity, sending request at this time increases latency of first request by a lot and may lead to 504 gateway timeout
-- To save on recomputation of vector indices, I store them in Google Cloud storage, and retrieve them each time a question is asked about the PDF. Thus if a new instance comes up, the indices still remain saved and reusable as data is not stored in RAM which may get wiped out.
-- Encountered an issue with ChromaDB where the data from each uploaded PDF file gets combined.
+- Since the AppEngine instances can go down to 0 after a period of inactivity, sending request at this time increases latency of first request by a lot and may lead to 502 bad gateway
+- To save on recomputation of vector indices, I store them in Google Cloud storage, and retrieve them each time a question is asked about the PDF. Thus if a new instance comes up, the indices still remain saved and reusable, as the data is not stored in RAM which may get wiped out.
+- Encountered an issue with ChromaDB where the data from each uploaded PDF file gets combined. Switched to FAISS.
 - Prompt engineering, initially because of bad prompt was not always getting expected results. After lot of tuning, it has improved the responses.
 
-## Screenshots:
-
-![Screenshot 2024-04-20 010644](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/4cca4520-b48c-425d-9302-5a23687c8421)
-![Screenshot 2024-04-20 010842](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/b72a9461-ab50-462a-8499-fe0d84cfa099)
-
+## Assumptions:
+- History of questions is not maintained when asking multiple questions on a single PDF.
