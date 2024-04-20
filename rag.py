@@ -1,4 +1,5 @@
 import os
+import cloud_storage_client
 from langchain_core.prompts import PromptTemplate
 from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import FAISS
@@ -10,7 +11,9 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 
 global llm, template
-llm = ChatOpenAI(model="gpt-3.5-turbo-0125")
+llm = ChatOpenAI(
+    model="gpt-3.5-turbo-0125"
+)
 template = """Use the following pieces of context to answer the question at the end. Use ONLY the context, do not make up your own answers.
     If the question is not related in any way or form to the data provided in context, say only this sentence 'Sorry, data regarding the same is not present in the PDF'.
     Use three sentences maximum and keep the answer as concise as possible.
@@ -33,7 +36,7 @@ def split_text(docs):
     return text_splitter.split_documents(docs)
 
 
-def generate_vectorstore(file_path):
+def generate_and_save_vectorstore(storage_folder, file_path):
     loader = PyPDFLoader(file_path)
     docs = loader.load_and_split()
 
@@ -41,7 +44,35 @@ def generate_vectorstore(file_path):
     vectorstore = FAISS.from_documents(
         documents=all_splits, embedding=OpenAIEmbeddings()
     )
-    return vectorstore
+
+    # Delete existing files if they exist before writing
+    if os.path.exists(os.path.join(storage_folder, "vectordata/index.faiss")):
+        os.remove(os.path.join(storage_folder, "vectordata/index.faiss"))
+    if os.path.exists(os.path.join(storage_folder, "vectordata/index.pkl")):
+        os.remove(os.path.join(storage_folder, "vectordata/index.pkl"))
+
+    vectorstore.save_local(os.path.join(storage_folder, "vectordata"))
+    # Upload files to Google Cloud
+    cloud_storage_client.upload_file_to_location(
+        os.path.join(storage_folder, "vectordata"), "index.faiss", "index.faiss"
+    )
+    cloud_storage_client.upload_file_to_location(
+        os.path.join(storage_folder, "vectordata"), "index.pkl", "index.pkl"
+    )
+
+
+def get_vectorstore(storage_folder):
+    cloud_storage_client.download_file_from_location(
+        os.path.join(storage_folder, "vectordata"), "index.faiss", "index.faiss"
+    )
+    cloud_storage_client.download_file_from_location(
+        os.path.join(storage_folder, "vectordata"), "index.pkl", "index.pkl"
+    )
+    return FAISS.load_local(
+        os.path.join(storage_folder, "vectordata"),
+        OpenAIEmbeddings(),
+        allow_dangerous_deserialization=True,
+    )
 
 
 def answer_based_on_document(vectorstore, question):

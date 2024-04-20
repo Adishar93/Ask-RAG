@@ -7,6 +7,8 @@ import MuiAlert from '@mui/material/Alert';
 
 function App() {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarSeverity, setSnackbarSeverity] = useState('success');
 
   const handleSnackbarClose = () => {
     setSnackbarOpen(false);
@@ -16,13 +18,13 @@ function App() {
     <BrowserRouter>
 
       <Routes>
-        <Route exact path="/" element={<UploadPage setSnackbarOpen={setSnackbarOpen} />} />
-        <Route exact path="/chat" element={<ChatPage />} />
+        <Route exact path="/" element={<ChatPage setSnackbarOpen={setSnackbarOpen} setSnackbarMessage={setSnackbarMessage} setSnackbarSeverity={setSnackbarSeverity}/>} />
+        <Route exact path="/upload" element={<UploadPage setSnackbarOpen={setSnackbarOpen} setSnackbarMessage={setSnackbarMessage} setSnackbarSeverity={setSnackbarSeverity} />} />
       </Routes>
 
       <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
-        <MuiAlert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          File Uploaded and Processed Successfully!
+        <MuiAlert onClose={handleSnackbarClose} severity={snackbarSeverity} sx={{ width: '100%' }}>
+          {snackbarMessage}
         </MuiAlert>
       </Snackbar>
 

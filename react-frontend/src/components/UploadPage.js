@@ -5,7 +5,7 @@ import { SERVER_URL } from '../Constants';
 import CircularProgress from '@mui/material/CircularProgress';
 
 
-function UploadPage({ setSnackbarOpen }) {
+function UploadPage({ setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity }) {
     const [selectedFile, setSelectedFile] = useState(null);
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
@@ -27,11 +27,16 @@ function UploadPage({ setSnackbarOpen }) {
             console.log(response.data.message);
 
             setLoading(false);
+            setSnackbarMessage('File Uploaded and Processed Successfully!');
+            setSnackbarSeverity('success');
             setSnackbarOpen(true);
-            navigate('/chat');
+            navigate('/');
 
         } catch (error) {
             console.error('Error uploading PDF:', error);
+            setSnackbarMessage('Error uploading PDF. Please try again!');
+            setSnackbarSeverity('error');
+            setSnackbarOpen(true);
             setLoading(false)
         }
     };

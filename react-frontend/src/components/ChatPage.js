@@ -5,16 +5,23 @@ import './PageStyle.css';
 import { SERVER_URL } from '../Constants';
 import { useNavigate } from "react-router-dom";
 
-function ChatPage() {
-    const [message, setMessage] = useState('');
+function ChatPage({setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity}) {
+    const [question, setQuestion] = useState('');
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
     const navigate = useNavigate();
 
-    const sendMessage = async () => {
+    const sendQuestion = async () => {
+         if (!question.trim()) {
+            console.log('Question is empty');
+            setSnackbarMessage('Please enter a question!');
+            setSnackbarSeverity('warning');
+            setSnackbarOpen(true);
+            return;
+        }
         try {
             setLoading(true);
-            const requestBody = { question: message };
+            const requestBody = { question: question };
             const response = await axios.post(SERVER_URL + '/ask/question', requestBody);
             setResponse(response.data)
         } catch (error) {
@@ -25,7 +32,7 @@ function ChatPage() {
     };
 
     const navigateHome = async () => {
-        navigate('/');
+        navigate('/upload');
     };
 
     return (
@@ -34,12 +41,16 @@ function ChatPage() {
             <div className="input-container">
                 <input
                     type="text"
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
                     placeholder="Type your question..."
                     className="input-field"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter")
+                            sendQuestion();
+                    }}
                 />
-                <button onClick={sendMessage} className="button">
+                <button onClick={sendQuestion} className="button">
                     Ask
                 </button>
                 <button onClick={navigateHome} className="button">
