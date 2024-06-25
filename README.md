@@ -88,5 +88,13 @@ Both the frontend and backend are deployed on separate App Engine instances. To 
 ## Demo Video:
 
 
-https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/bb3bc7f6-06b3-491a-bfda-1e8374c7ab4d
+
+
+https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/1e595f0a-1a87-4564-8d4c-a294fdd3a415
+
+
+
+
+
+
 
