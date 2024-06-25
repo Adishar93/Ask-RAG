@@ -15,7 +15,7 @@ llm = ChatOpenAI(
     model="gpt-3.5-turbo-0125"
 )
 template = """Use the following pieces of context to answer the question at the end. Use ONLY the context, do not make up your own answers.
-    If the question is not related in any way or form to the data provided in context, say only this sentence 'Sorry, data regarding the same is not present in the PDF'.
+    If the question is not related in any way or form to the data provided in context, say only this sentence 'Your question isn't answerable using the PDF you uploaded, sorry!'.
     Use three sentences maximum and keep the answer as concise as possible.
 
     {context}
