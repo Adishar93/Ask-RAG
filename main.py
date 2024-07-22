@@ -44,13 +44,14 @@ def upload_process_pdf():
 # Endpoints
 @app.route("/process/youtube", methods=["POST"])
 def process_youtube():
+    global storage_folder
     data = request.get_json()
     youtube_url = data.get('youtube_url')
     if not youtube_url:
         return jsonify({'error': 'No YouTube URL provided'}), 400
 
     try:
-        audio_path = download_audio_from_youtube(youtube_url)
+        audio_path = download_audio_from_youtube(youtube_url, storage_folder)
         print('Audio path:', audio_path)
     except Exception as e:
         return jsonify({'download youtube error': str(e)}), 500

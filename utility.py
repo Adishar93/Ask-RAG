@@ -1,8 +1,8 @@
 import os
 from pytubefix import YouTube
-from pytubefix.cli import on_progress
 #from moviepy.editor import VideoFileClip
 import assemblyai as aai
+
 
 def write_file(file_path, file_contents):
     if os.path.exists(file_path):
@@ -22,12 +22,12 @@ def transcribe_audio(file_path):
     else:
         return transcript.text
 
-def download_audio_from_youtube(youtube_url, output_file_name='audio'):
+def download_audio_from_youtube(youtube_url, storage_folder, output_file_name='audio'):
     try:
         yt = YouTube(youtube_url)
         print(yt.title)
         ys = yt.streams.get_audio_only()
-        ys.download(filename=output_file_name, mp3=True)
+        ys.download(filename=os.path.join(storage_folder, output_file_name), mp3=True)
     except Exception as e:
         raise Exception('Downloading video error: ', str(e))
 
@@ -37,4 +37,4 @@ def download_audio_from_youtube(youtube_url, output_file_name='audio'):
     #     video_clip.close()
     # except Exception as e:
     #     raise Exception('Converting video error: ', str(e))
-    return output_file_name+str('.mp3')
+    return os.path.join(storage_folder, output_file_name)+str('.mp3')
