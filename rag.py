@@ -1,14 +1,12 @@
 import os
 import cloud_storage_client
 from langchain_core.prompts import PromptTemplate
-from langchain_community.document_loaders import PyPDFLoader
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
 
 global llm, template
 llm = ChatOpenAI(
@@ -36,10 +34,8 @@ def split_text(docs):
     return text_splitter.split_documents(docs)
 
 
-def generate_and_save_vectorstore(storage_folder, file_path):
-    loader = PyPDFLoader(file_path)
-    docs = loader.load_and_split()
-
+def generate_and_save_vectorstore(storage_folder, docs):
+    
     all_splits = split_text(docs)
     vectorstore = FAISS.from_documents(
         documents=all_splits, embedding=OpenAIEmbeddings()
