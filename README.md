@@ -52,6 +52,8 @@ Once both the backend and frontend are set up, you should be able to access the 
 
 ![Screenshot 2024-04-20 010644](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/4cca4520-b48c-425d-9302-5a23687c8421)
 ![Screenshot 2024-04-20 010842](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/b72a9461-ab50-462a-8499-fe0d84cfa099)
+![image](https://github.com/user-attachments/assets/d80dcd8e-2ad0-4a4e-8761-f560f992964a)
+
 
 ## Architecture and Technologies Used:
 
