@@ -13,7 +13,7 @@ llm = ChatOpenAI(
     model="gpt-3.5-turbo-0125"
 )
 template = """Use the following pieces of context to answer the question at the end. Use ONLY the context, do not make up your own answers.
-    If the question is not related in any way or form to the data provided in context, say only this sentence 'Your question isn't answerable using the PDF/video you provided, sorry!'.
+    If the question is not related in any way or form to the data provided in context, say only this sentence 'Your question isn't answerable using the PDF or video you provided, sorry!'.
     Use three sentences maximum and keep the answer as concise as possible. if the question mentions 'video' or 'PDF' it refers to the context provided.
 
     {context}

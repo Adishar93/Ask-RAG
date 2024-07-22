@@ -64,7 +64,7 @@ function ChatPage({ setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity }) 
 
     return (
         <div className="chat-container">
-            <h2>Chat PDF</h2>
+            <h2>QnA on the Content Provided</h2>
             <div className="input-container">
                 <input
                     type="text"
