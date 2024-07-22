@@ -40,6 +40,15 @@ def upload_process_pdf():
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response, 200
 
+@app.route("/process/youtube", methods=["OPTIONS"])
+def handle_preflight_youtube():
+    # Add CORS headers to the response
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+    return "", 204, headers
 
 # Endpoints
 @app.route("/process/youtube", methods=["POST"])
@@ -48,21 +57,29 @@ def process_youtube():
     data = request.get_json()
     youtube_url = data.get('youtube_url')
     if not youtube_url:
-        return jsonify({'error': 'No YouTube URL provided'}), 400
+         response =  jsonify({'error': 'No YouTube URL provided'})
+         response.headers.add("Access-Control-Allow-Origin", "*")
+         return response, 400
 
     try:
         audio_path = download_audio_from_youtube(youtube_url, storage_folder)
         print('Audio path:', audio_path)
     except Exception as e:
-        return jsonify({'download youtube error': str(e)}), 500
+        response = jsonify({'download youtube error': str(e)})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 500
     
     try:
         transcription = transcribe_audio(audio_path)
         transcription_document = [Document(page_content=transcription, metadata={})]
         generate_and_save_vectorstore(storage_folder, transcription_document)
-        return jsonify({'transcription': transcription})
+        response = jsonify({'transcription': transcription})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 200
     except Exception as e:
-        return jsonify({'transcribe audio error': str(e)}), 500
+        response = jsonify({'transcribe audio error': str(e)})
+        response.headers.add("Access-Control-Allow-Origin", "*")
+        return response, 500
 
 @app.route("/ask/question", methods=["OPTIONS"])
 def handle_preflight():

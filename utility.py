@@ -3,7 +3,6 @@ from pytubefix import YouTube
 #from moviepy.editor import VideoFileClip
 import assemblyai as aai
 
-
 def write_file(file_path, file_contents):
     if os.path.exists(file_path):
         # Delete the file

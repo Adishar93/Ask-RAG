@@ -1,24 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import CircularProgress from '@mui/material/CircularProgress';
 import './PageStyle.css';
 import { SERVER_URL } from '../Constants';
 import { useNavigate } from "react-router-dom";
 
-function ChatPage({setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity}) {
+function ChatPage({ setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity }) {
     const [question, setQuestion] = useState('');
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
+    const [history, setHistory] = useState([]);
+    const [isDropdownVisible, setIsDropdownVisible] = useState(false);
     const navigate = useNavigate();
 
+    const handleInputChange = (e) => {
+        setQuestion(e.target.value);
+        setIsDropdownVisible(e.target.value.length > 0);
+    };
+
+    useEffect(() => {
+        const savedHistory = localStorage.getItem('inputHistory');
+        if (savedHistory) {
+            setHistory(JSON.parse(savedHistory));
+        }
+    }, []);
+
+    useEffect(() => {
+        localStorage.setItem('inputHistory', JSON.stringify(history));
+    }, [history]);
+
     const sendQuestion = async () => {
-         if (!question.trim()) {
+        if (!question.trim()) {
             console.log('Question is empty');
             setSnackbarMessage('Please enter a question!');
             setSnackbarSeverity('warning');
             setSnackbarOpen(true);
             return;
         }
+        if (question.trim()) {
+            setHistory(prevHistory => [...prevHistory, question]);
+          }
+          setIsDropdownVisible(false);
         try {
             setLoading(true);
             const requestBody = { question: question };
@@ -35,6 +57,11 @@ function ChatPage({setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity}) {
         navigate('/upload');
     };
 
+    const handleHistoryClick = (item) => {
+        setQuestion(item);
+        setIsDropdownVisible(false);
+      };
+
     return (
         <div className="chat-container">
             <h2>Chat PDF</h2>
@@ -42,7 +69,9 @@ function ChatPage({setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity}) {
                 <input
                     type="text"
                     value={question}
-                    onChange={(e) => setQuestion(e.target.value)}
+                    onChange={handleInputChange}
+                    onFocus={() => setIsDropdownVisible(question.length > 0)}
+                    onBlur={() => setTimeout(() => setIsDropdownVisible(false), 100)}
                     placeholder="Type your question..."
                     className="input-field"
                     onKeyDown={(e) => {
@@ -57,6 +86,31 @@ function ChatPage({setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity}) {
                     Upload New File
                 </button>
             </div>
+            {isDropdownVisible && (
+                <ul style={{
+                    border: '2px solid #ccc',
+                    width: '20%',
+                    position: 'absolute',
+                    listStyleType: 'none',
+                    padding: '0',
+                    margin: '0',
+                    backgroundColor: '#fff',
+                    maxHeight: '5%',
+                    overflowY: 'auto',
+                }}>
+                    {history
+                        .filter(item => item.toLowerCase().includes(question.toLowerCase()))
+                        .map((item, index) => (
+                            <li
+                                key={index}
+                                onMouseDown={() => handleHistoryClick(item)}
+                                style={{ padding: '5px', cursor: 'pointer' }}
+                            >
+                                {item}
+                            </li>
+                        ))}
+                </ul>
+            )}
             {loading && (
                 <div className="loading-indicator">
                     <CircularProgress />
