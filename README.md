@@ -57,13 +57,14 @@ Once both the backend and frontend are set up, you should be able to access the 
 
 ### Frontend:
 The frontend of this project is built using React. It consists of two main pages:
-- **Upload PDFs Page:** Allows users to upload PDF files.
+- **Upload Content Page:** Allows users to upload PDF files or to provide Youtube Links.
 - **Ask Questions Page:** Enables users to ask questions about the uploaded PDFs.
 
 ### Backend:
-The backend is powered by Flask, a lightweight Python web framework. It provides two POST endpoints:
+The backend is powered by Flask, a lightweight Python web framework. It provides three POST endpoints:
 - **Upload PDFs Endpoint:** Handles the uploading of PDF files.
-- **Ask Questions Endpoint:** Accepts questions from users and provides relevant answers from PDFs.
+- **Process Youtube Link Endpoint:** Processes youtube video and stores transcript as vectors.
+- **Ask Questions Endpoint:** Accepts questions from users and provides relevant answers from the processed and stored data (PDF or Video).
 
 The backend codebase is organized into different modules based on their roles:
 - **utility.py:** Contains utility functions used across the project.
