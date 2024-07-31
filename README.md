@@ -1,4 +1,4 @@
-# RAG-Chat-Doc
+# AskRAG
 
 ## Local Setup:
 ### Backend Setup:
