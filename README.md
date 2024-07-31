@@ -1,4 +1,4 @@
-# AskRAG
+# Ask-RAG
 
 ## Local Setup:
 ### Backend Setup:
