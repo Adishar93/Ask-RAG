@@ -48,6 +48,14 @@
 
 Once both the backend and frontend are set up, you should be able to access the application locally.
 
+## Demo Video:
+
+### Youtube Url Demo:
+https://github.com/user-attachments/assets/065a3af9-f6ab-4907-9b52-1ce95063ccd4
+
+### PDF file Demo:
+https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/1e595f0a-1a87-4564-8d4c-a294fdd3a415
+
 ## Screenshots:
 
 ![Screenshot 2024-04-20 010644](https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/4cca4520-b48c-425d-9302-5a23687c8421)
@@ -88,12 +96,6 @@ Both the frontend and backend are deployed on separate App Engine instances. To 
 ## Assumptions:
 - History of questions is not maintained when asking multiple questions on a single PDF.
 
-## Demo Video:
-
-
-
-
-https://github.com/Adishar93/RAG-Chat-Doc/assets/39119745/1e595f0a-1a87-4564-8d4c-a294fdd3a415
 
 
 
