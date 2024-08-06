@@ -83,7 +83,7 @@ function ChatPage({ setSnackbarOpen, setSnackbarMessage, setSnackbarSeverity }) 
                     Ask
                 </button>
                 <button onClick={navigateHome} className="button">
-                    Upload New File
+                    Provide New Context
                 </button>
             </div>
             {isDropdownVisible && (

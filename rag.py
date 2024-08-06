@@ -1,18 +1,21 @@
 import os
 import cloud_storage_client
+from langchain.chains.combine_documents.stuff import StuffDocumentsChain
+from langchain.chains.llm import LLMChain
 from langchain_core.prompts import PromptTemplate
 from langchain_community.vectorstores import FAISS
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
 from langchain_openai import OpenAIEmbeddings
 from langchain_openai import ChatOpenAI
+from langchain.schema import Document
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-global llm, template
+global llm, question_template
 llm = ChatOpenAI(
     model="gpt-3.5-turbo-0125"
 )
-template = """Use the following pieces of context to answer the question at the end. Use ONLY the context, do not make up your own answers.
+question_template = """Use the following pieces of context to answer the question at the end. Use ONLY the context, do not make up your own answers.
     If the question is not related in any way or form to the data provided in context, say only this sentence 'Your question isn't answerable using the PDF or video you provided, sorry!'.
     Use three sentences maximum and keep the answer as concise as possible. if the question mentions 'video' or 'PDF' it refers to the context provided.
 
@@ -21,6 +24,10 @@ template = """Use the following pieces of context to answer the question at the 
     Question: {question}
 
     Helpful Answer:"""
+
+medical_summarization_template = """Summarize the following text into meaningful bullet points considering it contains patient doctor consultation conversation summarize it for the patient:
+"{text}"
+Summary:"""
 
 
 def format_docs(docs):
@@ -72,11 +79,11 @@ def get_vectorstore(storage_folder):
 
 
 def answer_based_on_document(vectorstore, question):
-    global template
+    global question_template
     retriever = vectorstore.as_retriever(
         search_type="similarity", search_kwargs={"k": 6}
     )
-    custom_rag_prompt = PromptTemplate.from_template(template)
+    custom_rag_prompt = PromptTemplate.from_template(question_template)
     rag_chain = (
         {"context": retriever | format_docs, "question": RunnablePassthrough()}
         | custom_rag_prompt
@@ -87,5 +94,17 @@ def answer_based_on_document(vectorstore, question):
     finalAnswer = ""
     for chunk in rag_chain.stream(question):
         finalAnswer += chunk
+
+    return finalAnswer
+
+def summarize_medical_consultation(text):
+    global medical_summarization_template
+    custom_summary_prompt = PromptTemplate.from_template(medical_summarization_template)
+    llm_chain = LLMChain(llm=llm, prompt=custom_summary_prompt)
+    stuff_chain = StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
+    text_document = Document(page_content=text)
+    finalAnswer = ""
+    for chunk in stuff_chain.stream([text_document]):
+        finalAnswer += chunk["output_text"]
 
     return finalAnswer

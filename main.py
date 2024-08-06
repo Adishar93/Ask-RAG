@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask, request, jsonify
-from rag import answer_based_on_document, generate_and_save_vectorstore, get_vectorstore
+from rag import answer_based_on_document, generate_and_save_vectorstore, get_vectorstore, summarize_medical_consultation
 from langchain_community.vectorstores import FAISS
 from langchain.schema import Document
 from langchain_openai import OpenAIEmbeddings
@@ -103,6 +103,28 @@ def answer_question():
     finalAnswer = answer_based_on_document(vectorstore, question)
 
     response = jsonify({"answer": finalAnswer})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/summarize/medical", methods=["OPTIONS"])
+def handle_preflight_medical():
+    # Add CORS headers to the response
+    headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Methods": "POST",
+        "Access-Control-Allow-Headers": "Content-Type",
+    }
+    return "", 204, headers
+
+
+@app.route("/summarize/medical", methods=["POST"])
+def summarize_medical():
+    data = request.get_json()
+    text = data.get("text")
+
+    summarized = summarize_medical_consultation(text)
+
+    response = jsonify({"summarized": summarized})
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
